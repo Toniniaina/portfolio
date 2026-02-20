@@ -44,10 +44,13 @@ const getCardStyles = (variant: string, padding: string) => {
   };
 };
 
-const StyledCard = styled(motion.div)<{ 
+const StyledCard = styled(motion.div, {
+  shouldForwardProp: (prop) =>
+    !['variant', 'padding', 'hoverable', 'clickable'].includes(prop),
+})<{ 
   variant: string; 
   padding: string; 
-  hoverable: boolean;
+  hoverable: boolean; 
   clickable: boolean;
 }>`
   ${({ variant, padding }) => getCardStyles(variant, padding)}
