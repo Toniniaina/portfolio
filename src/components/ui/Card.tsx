@@ -1,17 +1,16 @@
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 import { theme } from '../../styles/theme';
 import { ReactNode } from 'react';
 
-interface CardProps {
+interface CardProps extends HTMLMotionProps<"div"> {
   children: ReactNode;
   variant?: 'default' | 'glass' | 'elevated';
   padding?: 'sm' | 'md' | 'lg';
   className?: string;
   onClick?: () => void;
   hoverable?: boolean;
-  as?: React.ElementType;
-  [key: string]: any;
+  as?: any;
 }
 
 const getCardStyles = (variant: string, padding: string) => {
@@ -120,6 +119,15 @@ export const Card = ({
     whileHover: hoverable ? { y: -4 } : undefined,
   };
 
+  // Filtrer les props spécifiques à Card pour éviter de les passer au DOM si 'as' est utilisé
+  // Styled-components gère cela pour ses propres props, mais pas pour les nôtres si elles sont passées manuellement
+  // Cependant, ici StyledCard consomme variant/padding/hoverable/clickable
+  
+  // Le problème TS vient du fait que StyledCard attend des props spécifiques
+  // et 'as' change le type sous-jacent, ce qui peut causer des conflits de types.
+  // En utilisant 'any' pour 'as' dans l'interface, on contourne la vérification stricte.
+  // De plus, on doit s'assurer que StyledCard accepte 'as'.
+  
   return (
     <StyledCard
       as={as}
