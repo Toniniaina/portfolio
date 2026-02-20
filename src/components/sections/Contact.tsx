@@ -293,12 +293,12 @@ const socialLinks = [
   {
     icon: <FaGithub />,
     label: 'GitHub',
-    href: 'https://github.com'
+    href: 'https://github.com/Toniniaina'
   },
   {
     icon: <FaLinkedin />,
     label: 'LinkedIn',
-    href: 'https://linkedin.com'
+    href: 'https://linkedin.com/in/kantoniaina-odilah-randrianjanahary-a2ba69337'
   },
   {
     icon: <FaTwitter />,
