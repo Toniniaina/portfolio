@@ -181,10 +181,17 @@ const SocialLink = styled(motion.a)`
   }
 `;
 
-const ContactForm = styled(Card)`
+const ContactFormContainer = styled(Card)`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing.lg};
+`;
+
+const ContactForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.lg};
+  width: 100%;
 `;
 
 const FormTitle = styled.h3`
@@ -337,30 +344,16 @@ export const Contact = () => {
     threshold: 0.1,
   });
 
-  const [state, handleSubmit] = useForm("mlgwwpoz");
+  // @ts-ignore - reset might not be in the type definition depending on version but is often available
+  const [state, handleSubmit, reset] = useForm("mlgwwpoz");
 
-  if (state.succeeded) {
-    return (
-      <ContactSection id="contact" ref={ref}>
-        <div className="container">
-          <SectionHeader>
-            <SectionTitle>Message Envoyé !</SectionTitle>
-            <SectionSubtitle>
-              Merci de m'avoir contacté. Je vous répondrai dès que possible.
-            </SectionSubtitle>
-            <Button 
-              variant="primary" 
-              size="lg" 
-              onClick={() => window.location.reload()}
-              style={{ marginTop: '2rem' }}
-            >
-              Retour au formulaire
-            </Button>
-          </SectionHeader>
-        </div>
-      </ContactSection>
-    );
-  }
+  const resetForm = () => {
+    if (reset && typeof reset === 'function') {
+      reset();
+    } else {
+      window.location.reload();
+    }
+  };
 
   return (
     <ContactSection id="contact" ref={ref}>
@@ -434,77 +427,95 @@ export const Contact = () => {
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <ContactForm as="form" onSubmit={handleSubmit} variant="glass" padding="lg">
-                <FormTitle>Envoyez-moi un message</FormTitle>
-                
-                <FormGroup>
-                  <FormLabel htmlFor="name">Nom complet</FormLabel>
-                  <FormInput
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="Votre nom"
-                    required
-                  />
-                  <ValidationError 
-                    prefix="Name" 
-                    field="name"
-                    errors={state.errors}
-                  />
-                </FormGroup>
-                
-                <FormGroup>
-                  <FormLabel htmlFor="email">Email</FormLabel>
-                  <FormInput
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="votre.email@example.com"
-                    required
-                  />
-                  <ValidationError 
-                    prefix="Email" 
-                    field="email"
-                    errors={state.errors}
-                  />
-                </FormGroup>
-                
-                <FormGroup>
-                  <FormLabel htmlFor="subject">Sujet</FormLabel>
-                  <FormInput
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    placeholder="Sujet de votre message"
-                    required
-                  />
-                  <ValidationError 
-                    prefix="Subject" 
-                    field="subject"
-                    errors={state.errors}
-                  />
-                </FormGroup>
-                
-                <FormGroup>
-                  <FormLabel htmlFor="message">Message</FormLabel>
-                  <FormTextarea
-                    id="message"
-                    name="message"
-                    placeholder="Décrivez votre projet ou votre demande..."
-                    required
-                  />
-                  <ValidationError 
-                    prefix="Message" 
-                    field="message"
-                    errors={state.errors}
-                  />
-                </FormGroup>
-                
-                <Button variant="primary" size="lg" type="submit" disabled={state.submitting}>
-                  <FaEnvelope />
-                  {state.submitting ? 'Envoi en cours...' : 'Envoyer le message'}
-                </Button>
-              </ContactForm>
+              <ContactFormContainer variant="glass" padding="lg">
+                {state.succeeded ? (
+                  <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+                    <FormTitle>Message Envoyé !</FormTitle>
+                    <p style={{ marginBottom: '2rem', color: theme.colors.textMuted }}>
+                      Merci de m'avoir contacté. Je vous répondrai dès que possible.
+                    </p>
+                    <Button 
+                      variant="primary" 
+                      size="lg" 
+                      onClick={resetForm}
+                    >
+                      Retour au formulaire
+                    </Button>
+                  </div>
+                ) : (
+                  <ContactForm onSubmit={handleSubmit}>
+                    <FormTitle>Envoyez-moi un message</FormTitle>
+                    
+                    <FormGroup>
+                      <FormLabel htmlFor="name">Nom complet</FormLabel>
+                      <FormInput
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Votre nom"
+                        required
+                      />
+                      <ValidationError 
+                        prefix="Name" 
+                        field="name"
+                        errors={state.errors}
+                      />
+                    </FormGroup>
+                    
+                    <FormGroup>
+                      <FormLabel htmlFor="email">Email</FormLabel>
+                      <FormInput
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="votre.email@example.com"
+                        required
+                      />
+                      <ValidationError 
+                        prefix="Email" 
+                        field="email"
+                        errors={state.errors}
+                      />
+                    </FormGroup>
+                    
+                    <FormGroup>
+                      <FormLabel htmlFor="subject">Sujet</FormLabel>
+                      <FormInput
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        placeholder="Sujet de votre message"
+                        required
+                      />
+                      <ValidationError 
+                        prefix="Subject" 
+                        field="subject"
+                        errors={state.errors}
+                      />
+                    </FormGroup>
+                    
+                    <FormGroup>
+                      <FormLabel htmlFor="message">Message</FormLabel>
+                      <FormTextarea
+                        id="message"
+                        name="message"
+                        placeholder="Décrivez votre projet ou votre demande..."
+                        required
+                      />
+                      <ValidationError 
+                        prefix="Message" 
+                        field="message"
+                        errors={state.errors}
+                      />
+                    </FormGroup>
+                    
+                    <Button variant="primary" size="lg" type="submit" disabled={state.submitting}>
+                      <FaEnvelope />
+                      {state.submitting ? 'Envoi en cours...' : 'Envoyer le message'}
+                    </Button>
+                  </ContactForm>
+                )}
+              </ContactFormContainer>
             </motion.div>
           </ContactContent>
         </motion.div>

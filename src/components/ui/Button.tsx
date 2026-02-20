@@ -14,6 +14,7 @@ interface ButtonProps {
   disabled?: boolean;
   className?: string;
   'aria-label'?: string;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 const getButtonStyles = (variant: string, size: string) => {
@@ -187,6 +188,7 @@ export const Button = ({
   disabled = false,
   className,
   'aria-label': ariaLabel,
+  type = 'button',
 }: ButtonProps) => {
   const motionProps = {
     whileHover: { scale: disabled ? 1 : 1.02 },
@@ -213,10 +215,11 @@ export const Button = ({
 
   return (
     <StyledButton
+      type={type}
       onClick={onClick}
+      disabled={disabled}
       variant={variant}
       size={size}
-      disabled={disabled}
       className={className}
       aria-label={ariaLabel}
       {...motionProps}

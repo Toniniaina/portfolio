@@ -10,6 +10,8 @@ interface CardProps {
   className?: string;
   onClick?: () => void;
   hoverable?: boolean;
+  as?: React.ElementType;
+  [key: string]: any;
 }
 
 const getCardStyles = (variant: string, padding: string) => {
@@ -108,6 +110,8 @@ export const Card = ({
   className,
   onClick,
   hoverable = false,
+  as,
+  ...props
 }: CardProps) => {
   const motionProps = {
     initial: { opacity: 0, y: 20 },
@@ -118,6 +122,7 @@ export const Card = ({
 
   return (
     <StyledCard
+      as={as}
       variant={variant}
       padding={padding}
       hoverable={hoverable}
@@ -125,6 +130,7 @@ export const Card = ({
       className={className}
       onClick={onClick}
       {...motionProps}
+      {...props}
     >
       {children}
     </StyledCard>
