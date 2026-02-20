@@ -6,6 +6,8 @@ import { Button } from '../ui/Button';
 import { FaEnvelope, FaGithub, FaLinkedin, FaTwitter, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
 import { useInView } from 'react-intersection-observer';
 
+import { useForm, ValidationError } from '@formspree/react';
+
 const ContactSection = styled.section`
   padding: ${theme.spacing.xxl} 0;
   position: relative;
@@ -335,6 +337,31 @@ export const Contact = () => {
     threshold: 0.1,
   });
 
+  const [state, handleSubmit] = useForm("mlgwwpoz");
+
+  if (state.succeeded) {
+    return (
+      <ContactSection id="contact" ref={ref}>
+        <div className="container">
+          <SectionHeader>
+            <SectionTitle>Message Envoyé !</SectionTitle>
+            <SectionSubtitle>
+              Merci de m'avoir contacté. Je vous répondrai dès que possible.
+            </SectionSubtitle>
+            <Button 
+              variant="primary" 
+              size="lg" 
+              onClick={() => window.location.reload()}
+              style={{ marginTop: '2rem' }}
+            >
+              Retour au formulaire
+            </Button>
+          </SectionHeader>
+        </div>
+      </ContactSection>
+    );
+  }
+
   return (
     <ContactSection id="contact" ref={ref}>
       <div className="container">
@@ -407,7 +434,7 @@ export const Contact = () => {
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <ContactForm variant="glass" padding="lg">
+              <ContactForm as="form" onSubmit={handleSubmit} variant="glass" padding="lg">
                 <FormTitle>Envoyez-moi un message</FormTitle>
                 
                 <FormGroup>
@@ -418,6 +445,11 @@ export const Contact = () => {
                     name="name"
                     placeholder="Votre nom"
                     required
+                  />
+                  <ValidationError 
+                    prefix="Name" 
+                    field="name"
+                    errors={state.errors}
                   />
                 </FormGroup>
                 
@@ -430,6 +462,11 @@ export const Contact = () => {
                     placeholder="votre.email@example.com"
                     required
                   />
+                  <ValidationError 
+                    prefix="Email" 
+                    field="email"
+                    errors={state.errors}
+                  />
                 </FormGroup>
                 
                 <FormGroup>
@@ -441,6 +478,11 @@ export const Contact = () => {
                     placeholder="Sujet de votre message"
                     required
                   />
+                  <ValidationError 
+                    prefix="Subject" 
+                    field="subject"
+                    errors={state.errors}
+                  />
                 </FormGroup>
                 
                 <FormGroup>
@@ -451,11 +493,16 @@ export const Contact = () => {
                     placeholder="Décrivez votre projet ou votre demande..."
                     required
                   />
+                  <ValidationError 
+                    prefix="Message" 
+                    field="message"
+                    errors={state.errors}
+                  />
                 </FormGroup>
                 
-                <Button variant="primary" size="lg">
+                <Button variant="primary" size="lg" type="submit" disabled={state.submitting}>
                   <FaEnvelope />
-                  Envoyer le message
+                  {state.submitting ? 'Envoi en cours...' : 'Envoyer le message'}
                 </Button>
               </ContactForm>
             </motion.div>

@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@formspree/react": "^3.0.0",
     "framer-motion": "^12.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -34,4 +35,3 @@
     "vite": "^6.1.0"
   }
 }
-
