@@ -51,8 +51,8 @@ export const theme = {
     full: '9999px',
   },
   fonts: {
-    body: 'Geist, sans-serif',
-    heading: 'Geist, sans-serif',
+    body: '"JetBrains Mono", monospace',
+    heading: '"JetBrains Mono", monospace',
   },
   transitions: {
     default: '0.3s ease-in-out',
