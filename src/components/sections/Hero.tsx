@@ -241,7 +241,7 @@ export const Hero = () => {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.8 }}
           >
-            Je crée des expériences numériques exceptionnelles en combinant design moderne et technologies de pointe. Spécialisé dans React, Node.js et l'écosystème JavaScript moderne.
+            Je crée des expériences numériques exceptionnelles en combinant design moderne et technologies de pointe. Spécialisé dans React, Vue.js, Java, .NET et l'écosystème web moderne.
           </Description>
           <CtaButtons
             initial={{ opacity: 0, y: 20 }}

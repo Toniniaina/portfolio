@@ -281,14 +281,14 @@ const contactInfo = [
   {
     icon: <FaEnvelope />,
     label: 'Email',
-    value: 'kantoniaina@example.com',
-    href: 'mailto:kantoniaina@example.com'
+    value: 'odilahrandrianjanahary@hotmail.com',
+    href: 'mailto:odilahrandrianjanahary@hotmail.com'
   },
   {
     icon: <FaPhone />,
     label: 'Téléphone',
-    value: '+261 34 12 345 67',
-    href: 'tel:+261341234567'
+    value: '+261 38 24 815 54',
+    href: 'tel:+261382481554'
   },
   {
     icon: <FaMapMarkerAlt />,

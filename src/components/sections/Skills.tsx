@@ -7,16 +7,20 @@ import {
   FaNodeJs,
   FaDocker,
   FaGitAlt,
-  FaAws,
-  FaPython
+  FaJenkins,
+  FaPython,
+  FaJava,
+  FaServer
 } from 'react-icons/fa';
 import {
-  SiTypescript,
+  SiVuedotjs,
   SiMongodb,
   SiNextdotjs,
   SiTailwindcss,
   SiGraphql,
-  SiKubernetes
+  SiKubernetes,
+  SiCsharp,
+  SiDotnet
 } from 'react-icons/si';
 import { useInView } from 'react-intersection-observer';
 
@@ -230,7 +234,7 @@ const skillCategories = [
     icon: <FaReact />,
     skills: [
       { name: 'React', icon: <FaReact />, level: 95 },
-      { name: 'TypeScript', icon: <SiTypescript />, level: 90 },
+      { name: 'Vue.js', icon: <SiVuedotjs />, level: 90 },
       { name: 'Next.js', icon: <SiNextdotjs />, level: 85 },
       { name: 'Tailwind CSS', icon: <SiTailwindcss />, level: 90 },
     ],
@@ -238,12 +242,12 @@ const skillCategories = [
   {
     title: 'Backend Development',
     description: 'APIs robustes et architectures scalables',
-    icon: <FaNodeJs />,
+    icon: <FaServer />,
     skills: [
-      { name: 'Node.js', icon: <FaNodeJs />, level: 90 },
+      { name: 'Java', icon: <FaJava />, level: 90 },
+      { name: '.NET', icon: <SiDotnet />, level: 85 },
+      { name: 'RESTful API', icon: <FaServer />, level: 90 },
       { name: 'Python', icon: <FaPython />, level: 85 },
-      { name: 'GraphQL', icon: <SiGraphql />, level: 80 },
-      { name: 'MongoDB', icon: <SiMongodb />, level: 85 },
     ],
   },
   {
@@ -252,7 +256,7 @@ const skillCategories = [
     icon: <FaDocker />,
     skills: [
       { name: 'Docker', icon: <FaDocker />, level: 85 },
-      { name: 'AWS', icon: <FaAws />, level: 80 },
+      { name: 'Jenkins', icon: <FaJenkins />, level: 80 },
       { name: 'Kubernetes', icon: <SiKubernetes />, level: 75 },
       { name: 'Git', icon: <FaGitAlt />, level: 95 },
     ],
@@ -260,9 +264,9 @@ const skillCategories = [
 ];
 
 const stats = [
-  { number: '3+', label: 'Années d\'expérience' },
-  { number: '50+', label: 'Projets réalisés' },
-  { number: '15+', label: 'Technologies maîtrisées' },
+  { number: '2', label: 'Années d\'expérience' },
+  { number: '20+', label: 'Projets réalisés' },
+  { number: '10+', label: 'Technologies maîtrisées' },
   { number: '100%', label: 'Satisfaction client' },
 ];
 
