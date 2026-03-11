@@ -5,7 +5,7 @@ import { theme } from '../../styles/theme';
 import { Button } from '../ui/Button';
 import { FaGithub, FaLinkedin, FaTwitter, FaDownload, FaArrowRight } from 'react-icons/fa';
 import { useInView } from 'react-intersection-observer';
-import profileImg from '../../assets/images/profile.png';
+import profileImg from '../../assets/images/20260308_084835.jpg';
 
 
 
@@ -161,20 +161,26 @@ const ImageContainer = styled(motion.div)`
 `;
 
 const ProfileImageWrapper = styled(motion.div)`
-  width: 350px;
-  height: 350px;
-  border-radius: ${theme.borderRadius.full};
+  width: 400px;
+  height: 400px;
+  border-radius: ${theme.borderRadius.lg};
   overflow: hidden;
-  border: 5px solid ${theme.colors.accent};
-  box-shadow: ${theme.colors.shadow.large};
+  border: 2px solid ${theme.colors.accent}40;
+  box-shadow: 0 0 30px ${theme.colors.accent}20;
   position: relative;
   z-index: 1;
+
+  @media (max-width: ${theme.breakpoints.sm}) {
+    width: 300px;
+    height: 300px;
+  }
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: top;
+    filter: brightness(1.05) contrast(1.05);
   }
 
   &::before {
