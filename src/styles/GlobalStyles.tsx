@@ -13,14 +13,12 @@ const globalStyles = css`
     font-size: 16px;
     overflow-x: hidden;
     width: 100%;
-    height: 100%;
   }
 
   body {
     font-family: ${theme.fonts.body};
     color: ${theme.colors.textLight};
     line-height: 1.6;
-    min-height: 100vh;
     width: 100%;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;

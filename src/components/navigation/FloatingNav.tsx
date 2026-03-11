@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { theme } from '../../styles/theme';
-import { FaHome, FaUser, FaCode, FaCog, FaEnvelope } from 'react-icons/fa';
+import { FaHome, FaCode, FaCog, FaEnvelope } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 
 const NavContainer = styled(motion.nav)`
@@ -59,7 +59,6 @@ const Tooltip = styled(motion.div)`
 
 const navItems = [
   { id: 'hero', label: 'Accueil', icon: <FaHome /> },
-  { id: 'about', label: 'À propos', icon: <FaUser /> },
   { id: 'projects', label: 'Projets', icon: <FaCode /> },
   { id: 'skills', label: 'Compétences', icon: <FaCog /> },
   { id: 'contact', label: 'Contact', icon: <FaEnvelope /> },

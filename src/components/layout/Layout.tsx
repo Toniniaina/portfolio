@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import { motion, useSpring, useMotionValue } from 'framer-motion';
+import { ReactNode, useEffect, useRef } from 'react';
 import { theme } from '../../styles/theme';
 import { FloatingNav } from '../navigation/FloatingNav';
+import { FaJava } from 'react-icons/fa';
+import { SiVuedotjs, SiDotnet, SiOracle } from 'react-icons/si';
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,6 +17,33 @@ const LayoutWrapper = styled.div`
   overflow-x: hidden;
   position: relative;
   background: transparent;
+`;
+
+const ProgressBar = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: ${theme.colors.gradient.accent};
+  transform-origin: 0%;
+  z-index: ${theme.zIndex.modal + 100};
+`;
+
+const FloatingIcon = styled(motion.div)`
+  position: fixed;
+  color: ${theme.colors.accent};
+  opacity: 0.25;
+  font-size: 3.5rem;
+  pointer-events: none;
+  z-index: 1;
+  filter: drop-shadow(0 0 15px ${theme.colors.accent}30);
+  will-change: transform;
+
+  @media (max-width: ${theme.breakpoints.sm}) {
+    font-size: 2.2rem;
+    opacity: 0.15;
+  }
 `;
 
 const Header = styled.header`
@@ -210,6 +239,45 @@ const BackToTop = styled(motion.button)`
 `;
 
 export const Layout = ({ children }: LayoutProps) => {
+  const progressValue = useMotionValue(0.25);
+  const scaleX = useSpring(progressValue, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  const lastIndex = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['hero', 'projects', 'skills', 'contact'];
+      const viewportHeight = window.innerHeight;
+      
+      let currentSectionIndex = 0;
+      
+      for (let i = 0; i < sections.length; i++) {
+        const element = document.getElementById(sections[i]);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          // Détection plus précise : si le haut de la section a dépassé 40% de l'écran
+          if (rect.top <= viewportHeight * 0.4) {
+            currentSectionIndex = i;
+          }
+        }
+      }
+      
+      if (currentSectionIndex !== lastIndex.current) {
+        lastIndex.current = currentSectionIndex;
+        const targetProgress = (currentSectionIndex + 1) / sections.length;
+        progressValue.set(targetProgress);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [progressValue]);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -223,6 +291,75 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <LayoutWrapper>
+      <ProgressBar style={{ scaleX }} />
+      
+      {/* Animation de chute (Haut vers Bas) */}
+      <FloatingIcon
+        style={{ left: '10%' }}
+        animate={{ 
+          y: ['-20vh', '115vh'],
+          rotate: [0, 360],
+          x: [0, 15, -15, 0]
+        }}
+        transition={{ 
+          y: { duration: 18, repeat: Infinity, ease: "linear" },
+          rotate: { duration: 25, repeat: Infinity, ease: "linear" },
+          x: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <FaJava />
+      </FloatingIcon>
+
+      <FloatingIcon
+        style={{ left: '85%' }}
+        animate={{ 
+          y: ['-20vh', '115vh'],
+          rotate: [360, 0],
+          x: [0, -20, 20, 0]
+        }}
+        transition={{ 
+          y: { duration: 22, repeat: Infinity, ease: "linear", delay: 2 },
+          rotate: { duration: 30, repeat: Infinity, ease: "linear" },
+          x: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <SiOracle />
+      </FloatingIcon>
+
+      {/* Animation de traversée (Gauche vers Droite) */}
+      <FloatingIcon
+        style={{ top: '15%' }}
+        animate={{ 
+          x: ['-15vw', '115vw'],
+          y: [0, 30, -30, 0],
+          rotate: [5, 15, 5]
+        }}
+        transition={{ 
+          x: { duration: 28, repeat: Infinity, ease: "linear", delay: 5 },
+          y: { duration: 8, repeat: Infinity, ease: "easeInOut" },
+          rotate: { duration: 8, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <SiDotnet />
+      </FloatingIcon>
+
+      {/* Animation de traversée (Droite vers Gauche) */}
+      <FloatingIcon
+        style={{ top: '75%' }}
+        animate={{ 
+          x: ['115vw', '-15vw'],
+          y: [0, -40, 40, 0],
+          rotate: [-5, -15, -5]
+        }}
+        transition={{ 
+          x: { duration: 24, repeat: Infinity, ease: "linear", delay: 10 },
+          y: { duration: 10, repeat: Infinity, ease: "easeInOut" },
+          rotate: { duration: 10, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <SiVuedotjs />
+      </FloatingIcon>
+
       <SkipLink href="#main-content">
         Aller au contenu principal
       </SkipLink>

@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { theme } from '../../styles/theme';
 import { Button } from '../ui/Button';
 import { FaGithub, FaLinkedin, FaTwitter, FaDownload, FaArrowRight } from 'react-icons/fa';
@@ -33,7 +34,7 @@ const HeroSection = styled.section`
 
 const HeroContent = styled.div`
   position: relative;
-  z-index: ${theme.zIndex.base};
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -87,6 +88,18 @@ const Subtitle = styled(motion.h2)`
   font-weight: 700;
   color: ${theme.colors.textLight};
   margin-bottom: ${theme.spacing.lg};
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 1.2em;
+`;
+
+const Cursor = styled(motion.span)`
+  display: inline-block;
+  width: 3px;
+  height: 1em;
+  background-color: ${theme.colors.accent};
+  margin-left: 2px;
 `;
 
 const Description = styled(motion.p)`
@@ -115,21 +128,23 @@ const CtaButtons = styled(motion.div)`
   }
 `;
 
+const SocialLink = styled(motion.a)`
+  color: ${theme.colors.textMuted};
+  font-size: 1.5rem;
+  transition: all ${theme.transitions.default};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: ${theme.colors.accent};
+  }
+`;
+
 const SocialLinks = styled(motion.div)`
   display: flex;
   gap: ${theme.spacing.md};
   margin-top: ${theme.spacing.xl};
-
-  a {
-    color: ${theme.colors.textMuted};
-    font-size: 1.5rem;
-    transition: all ${theme.transitions.default};
-
-    &:hover {
-      color: ${theme.colors.accent};
-      transform: translateY(-3px);
-    }
-  }
 `;
 
 const ImageContainer = styled(motion.div)`
@@ -203,9 +218,43 @@ const blobVariants = {
   },
 };
 
-
-
 export const Hero = () => {
+  const [textIndex, setTextIndex] = useState(0);
+  const [displayText, setDisplayText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const phrases = ["Développeur Full Stack", "Créateur de Solutions Numériques", "Concepteur d'Interfaces Modernes", "Passionné par l'Innovation"];
+  const typingSpeed = isDeleting ? 50 : 100;
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const currentPhrase = phrases[textIndex];
+      
+      if (!isDeleting && displayText === currentPhrase) {
+        setTimeout(() => setIsDeleting(true), 1500);
+      } else if (isDeleting && displayText === '') {
+        setIsDeleting(false);
+        setTextIndex((prev) => (prev + 1) % phrases.length);
+      } else {
+        setDisplayText(currentPhrase.substring(0, isDeleting ? displayText.length - 1 : displayText.length + 1));
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting, textIndex, phrases]);
+
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({
+        x: (e.clientX - window.innerWidth / 2) / 25,
+        y: (e.clientY - window.innerHeight / 2) / 25,
+      });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -234,14 +283,18 @@ export const Hero = () => {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.6 }}
           >
-            Développeur Full Stack
+            {displayText}
+            <Cursor
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+            />
           </Subtitle>
           <Description
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.8 }}
           >
-            Je crée des expériences numériques exceptionnelles en combinant design moderne et technologies de pointe. Spécialisé dans React, Vue.js, Java, .NET et l'écosystème web moderne.
+            Je crée des expériences numériques exceptionnelles en combinant design moderne et technologies de pointe pour réaliser des projets innovants et performants.
           </Description>
           <CtaButtons
             initial={{ opacity: 0, y: 20 }}
@@ -260,15 +313,36 @@ export const Hero = () => {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1, delay: 1.2 }}
           >
-            <a href="https://github.com/Toniniaina" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <SocialLink 
+              href="https://github.com/Toniniaina" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="GitHub"
+              whileHover={{ scale: 1.2, rotate: 5, color: theme.colors.accent }}
+              whileTap={{ scale: 0.9 }}
+            >
               <FaGithub />
-            </a>
-            <a href="https://linkedin.com/in/kantoniaina-odilah-randrianjanahary-a2ba69337" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            </SocialLink>
+            <SocialLink 
+              href="https://linkedin.com/in/kantoniaina-odilah-randrianjanahary-a2ba69337" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="LinkedIn"
+              whileHover={{ scale: 1.2, rotate: -5, color: theme.colors.accent }}
+              whileTap={{ scale: 0.9 }}
+            >
               <FaLinkedin />
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+            </SocialLink>
+            <SocialLink 
+              href="https://twitter.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="Twitter"
+              whileHover={{ scale: 1.2, rotate: 5, color: theme.colors.accent }}
+              whileTap={{ scale: 0.9 }}
+            >
               <FaTwitter />
-            </a>
+            </SocialLink>
           </SocialLinks>
         </TextContent>
         <ImageContainer
@@ -283,12 +357,27 @@ export const Hero = () => {
             <img src={profileImg} alt="Randrianjanahary Kantoniaina" />
           </ProfileImageWrapper>
           <Blob
-            style={{ width: 200, height: 200, top: '10%', left: '10%' }}
+            style={{ 
+              width: 200, 
+              height: 200, 
+              top: '10%', 
+              left: '10%',
+              x: mousePos.x,
+              y: mousePos.y
+            }}
             variants={blobVariants}
             animate="animate"
           />
           <Blob
-            style={{ width: 150, height: 150, bottom: '20%', right: '15%', background: theme.colors.accentSecondary }}
+            style={{ 
+              width: 150, 
+              height: 150, 
+              bottom: '20%', 
+              right: '15%', 
+              background: theme.colors.accentSecondary,
+              x: -mousePos.x,
+              y: -mousePos.y
+            }}
             variants={blobVariants}
             animate="animate"
           />
