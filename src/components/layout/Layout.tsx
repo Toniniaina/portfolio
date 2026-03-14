@@ -3,6 +3,7 @@ import { motion, useSpring, useMotionValue } from 'framer-motion';
 import { ReactNode, useEffect, useRef } from 'react';
 import { theme } from '../../styles/theme';
 import { FloatingNav } from '../navigation/FloatingNav';
+import { KrMonogram } from '../ui/KrMonogram';
 import { FaJava } from 'react-icons/fa';
 import { SiVuedotjs, SiDotnet, SiOracle } from 'react-icons/si';
 
@@ -76,18 +77,50 @@ const Nav = styled.nav`
 `;
 
 const Logo = styled(motion.div)`
-  color: ${theme.colors.light};
-  font-family: ${theme.fonts.heading};
-  font-size: clamp(1.25rem, 3vw, 1.5rem);
-  font-weight: 800;
-  background: linear-gradient(135deg, ${theme.colors.light} 0%, ${theme.colors.accent} 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  position: relative;
+  width: 56px;
+  height: 42px;
+  filter:
+    drop-shadow(0 0 10px ${theme.colors.accent}20)
+    drop-shadow(0 0 2px rgba(255, 255, 255, 0.12));
+  transform: translateZ(0);
   
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.04);
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    width: 34px;
+    height: 2px;
+    background: ${theme.colors.light};
+    border-radius: ${theme.borderRadius.full};
+    transform: translateX(-50%);
+    opacity: 0.7;
+    transition: width ${theme.transitions.default}, opacity ${theme.transitions.default};
+  }
+
+  &:hover::after {
+    width: 50px;
+    opacity: 0.95;
+  }
+
+  @media (max-width: ${theme.breakpoints.sm}) {
+    width: 52px;
+    height: 38px;
   }
 `;
 
@@ -256,7 +289,9 @@ export const Layout = ({ children }: LayoutProps) => {
       let currentSectionIndex = 0;
       
       for (let i = 0; i < sections.length; i++) {
-        const element = document.getElementById(sections[i]);
+        const sectionId = sections[i];
+        if (!sectionId) continue;
+        const element = document.getElementById(sectionId);
         if (element) {
           const rect = element.getBoundingClientRect();
           // Détection plus précise : si le haut de la section a dépassé 40% de l'écran
@@ -381,7 +416,7 @@ export const Layout = ({ children }: LayoutProps) => {
                 }
               }}
             >
-              Kantoniaina.dev
+              <KrMonogram />
             </Logo>
             
             <NavLinks role="list">

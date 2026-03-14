@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { theme } from '../../styles/theme';
 import { Button } from '../ui/Button';
 import { FaGithub, FaLinkedin, FaTwitter, FaDownload, FaArrowRight } from 'react-icons/fa';
@@ -39,9 +39,7 @@ const HeroContent = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: ${theme.spacing.xxl};
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 ${theme.spacing.lg};
+  width: 100%;
 
   @media (max-width: ${theme.breakpoints.md}) {
     flex-direction: column-reverse;
@@ -233,7 +231,7 @@ export const Hero = () => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      const currentPhrase = phrases[textIndex];
+      const currentPhrase = phrases[textIndex] ?? '';
       
       if (!isDeleting && displayText === currentPhrase) {
         setTimeout(() => setIsDeleting(true), 1500);
@@ -268,127 +266,129 @@ export const Hero = () => {
 
   return (
     <HeroSection id="hero" ref={ref}>
-      <HeroContent>
-        <TextContent>
-          <Greeting
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.2 }}
+      <div className="container">
+        <HeroContent>
+          <TextContent>
+            <Greeting
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              👋 Salut, je suis
+            </Greeting>
+            <Name
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              Randrianjanahary <span>Kantoniaina</span>
+            </Name>
+            <Subtitle
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.7, delay: 0.6 }}
+            >
+              {displayText}
+              <Cursor
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+              />
+            </Subtitle>
+            <Description
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              Je crée des expériences numériques exceptionnelles en combinant design moderne et technologies de pointe pour réaliser des projets innovants et performants.
+            </Description>
+            <CtaButtons
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.9, delay: 1 }}
+            >
+              <Button variant="primary" size="lg" href="#projects">
+                Voir mes projets <FaArrowRight />
+              </Button>
+              <Button variant="outline" size="lg" href="/cv.pdf" target="_blank" rel="noopener noreferrer">
+                Télécharger CV <FaDownload />
+              </Button>
+            </CtaButtons>
+            <SocialLinks
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 1, delay: 1.2 }}
+            >
+              <SocialLink 
+                href="https://github.com/Toniniaina" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="GitHub"
+                whileHover={{ scale: 1.2, rotate: 5, color: theme.colors.accent }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaGithub />
+              </SocialLink>
+              <SocialLink 
+                href="https://linkedin.com/in/kantoniaina-odilah-randrianjanahary-a2ba69337" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="LinkedIn"
+                whileHover={{ scale: 1.2, rotate: -5, color: theme.colors.accent }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaLinkedin />
+              </SocialLink>
+              <SocialLink 
+                href="https://twitter.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="Twitter"
+                whileHover={{ scale: 1.2, rotate: 5, color: theme.colors.accent }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaTwitter />
+              </SocialLink>
+            </SocialLinks>
+          </TextContent>
+          <ImageContainer
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
           >
-            👋 Salut, je suis
-          </Greeting>
-          <Name
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            Randrianjanahary <span>Kantoniaina</span>
-          </Name>
-          <Subtitle
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.6 }}
-          >
-            {displayText}
-            <Cursor
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 0.8, repeat: Infinity }}
+            <ProfileImageWrapper
+              whileHover={{ scale: 1.05, rotate: 2 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 10 }}
+            >
+              <img src={profileImg} alt="Randrianjanahary Kantoniaina" />
+            </ProfileImageWrapper>
+            <Blob
+              style={{ 
+                width: 200, 
+                height: 200, 
+                top: '10%', 
+                left: '10%',
+                x: mousePos.x,
+                y: mousePos.y
+              }}
+              variants={blobVariants}
+              animate="animate"
             />
-          </Subtitle>
-          <Description
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            Je crée des expériences numériques exceptionnelles en combinant design moderne et technologies de pointe pour réaliser des projets innovants et performants.
-          </Description>
-          <CtaButtons
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.9, delay: 1 }}
-          >
-            <Button variant="primary" size="lg" href="#projects">
-              Voir mes projets <FaArrowRight />
-            </Button>
-            <Button variant="outline" size="lg" href="/cv.pdf" target="_blank" rel="noopener noreferrer">
-              Télécharger CV <FaDownload />
-            </Button>
-          </CtaButtons>
-          <SocialLinks
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 1, delay: 1.2 }}
-          >
-            <SocialLink 
-              href="https://github.com/Toniniaina" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              aria-label="GitHub"
-              whileHover={{ scale: 1.2, rotate: 5, color: theme.colors.accent }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <FaGithub />
-            </SocialLink>
-            <SocialLink 
-              href="https://linkedin.com/in/kantoniaina-odilah-randrianjanahary-a2ba69337" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              aria-label="LinkedIn"
-              whileHover={{ scale: 1.2, rotate: -5, color: theme.colors.accent }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <FaLinkedin />
-            </SocialLink>
-            <SocialLink 
-              href="https://twitter.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              aria-label="Twitter"
-              whileHover={{ scale: 1.2, rotate: 5, color: theme.colors.accent }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <FaTwitter />
-            </SocialLink>
-          </SocialLinks>
-        </TextContent>
-        <ImageContainer
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={inView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
-        >
-          <ProfileImageWrapper
-            whileHover={{ scale: 1.05, rotate: 2 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 10 }}
-          >
-            <img src={profileImg} alt="Randrianjanahary Kantoniaina" />
-          </ProfileImageWrapper>
-          <Blob
-            style={{ 
-              width: 200, 
-              height: 200, 
-              top: '10%', 
-              left: '10%',
-              x: mousePos.x,
-              y: mousePos.y
-            }}
-            variants={blobVariants}
-            animate="animate"
-          />
-          <Blob
-            style={{ 
-              width: 150, 
-              height: 150, 
-              bottom: '20%', 
-              right: '15%', 
-              background: theme.colors.accentSecondary,
-              x: -mousePos.x,
-              y: -mousePos.y
-            }}
-            variants={blobVariants}
-            animate="animate"
-          />
-        </ImageContainer>
-      </HeroContent>
+            <Blob
+              style={{ 
+                width: 150, 
+                height: 150, 
+                bottom: '20%', 
+                right: '15%', 
+                background: theme.colors.accentSecondary,
+                x: -mousePos.x,
+                y: -mousePos.y
+              }}
+              variants={blobVariants}
+              animate="animate"
+            />
+          </ImageContainer>
+        </HeroContent>
+      </div>
     </HeroSection>
   );
 };

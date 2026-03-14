@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 200" role="img" aria-label="KR">
+  <title>KR</title>
+  <g fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="60" y1="15" x2="60" y2="185" />
+    <line x1="60" y1="185" x2="130" y2="40" />
+    <line x1="95" y1="110" x2="135" y2="185" />
+    <path d="M60 20 Q190 20 190 80 Q190 140 120 120" />
+    <line x1="120" y1="120" x2="165" y2="185" />
+  </g>
+</svg>

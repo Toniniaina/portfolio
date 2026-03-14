@@ -1,10 +1,39 @@
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { theme } from '../../styles/theme';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
+import { ImageCarousel } from '../ui/ImageCarousel';
 import { FaCode, FaEye } from 'react-icons/fa';
 import { useInView } from 'react-intersection-observer';
+import { useCallback, useMemo, useState } from 'react';
+
+import stackForgeImg1 from '../../assets/images/image1 (1).png';
+import stackForgeImg2 from '../../assets/images/image1 (2).png';
+import stackForgeImg3 from '../../assets/images/image1 (3).png';
+import stackForgeImg4 from '../../assets/images/image1 (4).png';
+
+type ProjectImageItem = {
+  src: string;
+  alt: string;
+};
+
+type Project = {
+  id: number;
+  title: string;
+  type: string;
+  description: string;
+  image: string;
+  images?: ProjectImageItem[];
+  techStack: string[];
+  githubUrl: string;
+  liveUrl: string;
+  stats: {
+    commits: string;
+    lines: string;
+    features: string;
+  };
+};
 
 const ProjectsSection = styled.section`
   padding: ${theme.spacing.xxl} 0;
@@ -21,6 +50,61 @@ const ProjectsSection = styled.section`
     height: 100px;
     background: linear-gradient(to bottom, transparent, ${theme.colors.accent}, transparent);
   }
+`;
+
+const ProjectCardInner = styled.div`
+  display: flex;
+  gap: ${theme.spacing.xl};
+  align-items: stretch;
+
+  @media (max-width: ${theme.breakpoints.md}) {
+    flex-direction: column;
+  }
+`;
+
+const MediaColumn = styled.div`
+  flex: 0 0 52%;
+  min-height: 380px;
+
+  @media (max-width: ${theme.breakpoints.md}) {
+    flex: 0 0 auto;
+    min-height: 300px;
+  }
+`;
+
+const ContentColumn = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ProjectMediaCarousel = styled(ImageCarousel)`
+  margin: 0;
+  height: 100%;
+`;
+
+const ProjectMediaFrame = styled.div`
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  border-radius: ${theme.borderRadius.lg};
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: ${theme.breakpoints.md}) {
+    min-height: 300px;
+  }
+`;
+
+const ProjectImageLeft = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  border-radius: ${theme.borderRadius.lg};
 `;
 
 const SectionHeader = styled.div`
@@ -59,15 +143,76 @@ const SectionSubtitle = styled(motion.p)`
   line-height: 1.6;
 `;
 
-const ProjectsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: ${theme.spacing.xl};
+const ProjectCarousel = styled.div`
   margin-top: ${theme.spacing.xxl};
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: ${theme.spacing.lg};
+`;
+
+const ProjectStage = styled.div`
+  width: 100%;
+`;
+
+const ProjectNavButton = styled.button<{ side: 'left' | 'right' }>`
+  width: 52px;
+  height: 52px;
+  border-radius: ${theme.borderRadius.full};
+  background: ${theme.colors.glass.background};
+  border: 1px solid ${theme.colors.glass.border};
+  color: ${theme.colors.light};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  backdrop-filter: blur(10px);
+  box-shadow: ${theme.colors.shadow.medium};
+  transition: all ${theme.transitions.default};
+
+  &:hover {
+    background: ${theme.colors.glass.hover};
+    transform: scale(1.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${theme.colors.accent};
+    outline-offset: 2px;
+  }
+
   @media (max-width: ${theme.breakpoints.sm}) {
-    grid-template-columns: 1fr;
-    gap: ${theme.spacing.lg};
+    width: 44px;
+    height: 44px;
+    font-size: 1.5rem;
+  }
+`;
+
+const ProjectNavigation = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${theme.spacing.md};
+`;
+
+const ProjectDots = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: ${theme.spacing.xs};
+`;
+
+const ProjectDot = styled.button<{ active: boolean }>`
+  width: 10px;
+  height: 10px;
+  border-radius: ${theme.borderRadius.full};
+  border: 1px solid ${theme.colors.glass.border};
+  background: ${({ active }) => (active ? theme.colors.accent : theme.colors.glass.card)};
+  opacity: ${({ active }) => (active ? 1 : 0.7)};
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
   }
 `;
 
@@ -81,39 +226,6 @@ const ProjectCard = styled(Card)`
   &:hover {
     transform: translateY(-8px);
     box-shadow: ${theme.colors.shadow.large};
-  }
-`;
-
-const ProjectImage = styled.div<{ imageUrl: string }>`
-  width: 100%;
-  height: 250px;
-  background-image: url(${props => props.imageUrl});
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  margin: -${theme.spacing.lg} -${theme.spacing.lg} ${theme.spacing.lg} -${theme.spacing.lg};
-  border-radius: ${theme.borderRadius.lg} ${theme.borderRadius.lg} 0 0;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      135deg,
-      ${theme.colors.accent}20 0%,
-      transparent 50%,
-      ${theme.colors.accentSecondary}20 100%
-    );
-    opacity: 0;
-    transition: opacity ${theme.transitions.default};
-  }
-  
-  &:hover::before {
-    opacity: 1;
   }
 `;
 
@@ -214,14 +326,20 @@ const Stat = styled.div`
   }
 `;
 
-const projects = [
+const projects: Project[] = [
   {
     id: 1,
-    title: "E-Commerce Platform",
+    title: "StackForge Generator",
     type: "Full Stack",
-    description: "Une plateforme e-commerce moderne avec gestion des paiements, système d'inventaire en temps réel et interface d'administration complète.",
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop",
-    techStack: ["React", "Node.js", "MongoDB", "Stripe", "Redis"],
+    description: "Projet personnel d’application de bureau StackForge Generator : générateur Full‑Stack (Spring Boot + Vue.js) à partir d’une base MySQL, avec une application JavaFX qui fait l’introspection du schéma, génère un CRUD avancé (DTO/Mapper, relations, Many‑to‑Many), et supporte des filtres dynamiques (QueryDSL) + export/import de configuration.",
+    images: [
+      { src: stackForgeImg1, alt: 'StackForge Generator - capture 1' },
+      { src: stackForgeImg2, alt: 'StackForge Generator - capture 2' },
+      { src: stackForgeImg3, alt: 'StackForge Generator - capture 3' },
+      { src: stackForgeImg4, alt: 'StackForge Generator - capture 4' },
+    ],
+    image: stackForgeImg1,
+    techStack: ["Java", "MySQL", "JavaFX", "Vue.js", "jlink"],
     githubUrl: "https://github.com",
     liveUrl: "https://example.com",
     stats: {
@@ -290,6 +408,19 @@ export const Projects = () => {
     threshold: 0.1,
   });
 
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const activeProject = useMemo(() => projects[activeIndex]!, [activeIndex]);
+
+  const goTo = useCallback((index: number) => {
+    const len = projects.length;
+    const next = ((index % len) + len) % len;
+    setActiveIndex(next);
+  }, []);
+
+  const prevProject = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo]);
+  const nextProject = useCallback(() => goTo(activeIndex + 1), [activeIndex, goTo]);
+
   return (
     <ProjectsSection id="projects" ref={ref}>
       <div className="container">
@@ -316,72 +447,116 @@ export const Projects = () => {
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
         >
-          <ProjectsGrid>
-            {projects.map((project) => (
-              <motion.div key={project.id} variants={itemVariants}>
-                <ProjectCard variant="glass" padding="lg" hoverable>
-                  <ProjectImage imageUrl={project.image} />
-                  
-                  <ProjectContent>
-                    <ProjectHeader>
-                      <div>
-                        <ProjectTitle>{project.title}</ProjectTitle>
-                        <ProjectType>{project.type}</ProjectType>
-                      </div>
-                    </ProjectHeader>
-                    
-                    <ProjectDescription>
-                      {project.description}
-                    </ProjectDescription>
-                    
-                    <ProjectStats>
-                      <Stat>
-                        <span className="number">{project.stats.commits}</span>
-                        <span className="label">Commits</span>
-                      </Stat>
-                      <Stat>
-                        <span className="number">{project.stats.lines}</span>
-                        <span className="label">Lines</span>
-                      </Stat>
-                      <Stat>
-                        <span className="number">{project.stats.features}</span>
-                        <span className="label">Features</span>
-                      </Stat>
-                    </ProjectStats>
-                    
-                    <TechStack>
-                      {project.techStack.map((tech) => (
-                        <TechTag key={tech}>{tech}</TechTag>
-                      ))}
-                    </TechStack>
-                    
-                    <ProjectLinks>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FaCode />
-                        Code
-                      </Button>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FaEye />
-                        Demo
-                      </Button>
-                    </ProjectLinks>
-                  </ProjectContent>
-                </ProjectCard>
-              </motion.div>
-            ))}
-          </ProjectsGrid>
+          <ProjectCarousel>
+            <ProjectStage>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeProject.id}
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit={{ opacity: 0, y: 30 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' as const }}
+                >
+                  <ProjectCard variant="glass" padding="lg" hoverable>
+                    <ProjectCardInner>
+                      <MediaColumn>
+                        {activeProject.id === 1 && activeProject.images ? (
+                          <ProjectMediaCarousel images={activeProject.images} height={320} />
+                        ) : (
+                          <ProjectMediaFrame>
+                            <ProjectImageLeft src={activeProject.image} alt={activeProject.title} loading="lazy" />
+                          </ProjectMediaFrame>
+                        )}
+                      </MediaColumn>
+
+                      <ContentColumn>
+                        <ProjectContent>
+                          <ProjectHeader>
+                            <div>
+                              <ProjectTitle>{activeProject.title}</ProjectTitle>
+                              <ProjectType>{activeProject.type}</ProjectType>
+                            </div>
+                          </ProjectHeader>
+
+                          <ProjectDescription>
+                            {activeProject.description}
+                          </ProjectDescription>
+
+                          <ProjectStats>
+                            <Stat>
+                              <span className="number">{activeProject.stats.commits}</span>
+                              <span className="label">Commits</span>
+                            </Stat>
+                            <Stat>
+                              <span className="number">{activeProject.stats.lines}</span>
+                              <span className="label">Lines</span>
+                            </Stat>
+                            <Stat>
+                              <span className="number">{activeProject.stats.features}</span>
+                              <span className="label">Features</span>
+                            </Stat>
+                          </ProjectStats>
+
+                          <TechStack>
+                            {activeProject.techStack.map((tech) => (
+                              <TechTag key={tech}>{tech}</TechTag>
+                            ))}
+                          </TechStack>
+
+                          <ProjectLinks>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              href={activeProject.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <FaCode />
+                              Code
+                            </Button>
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              href={activeProject.liveUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <FaEye />
+                              Demo
+                            </Button>
+                          </ProjectLinks>
+                        </ProjectContent>
+                      </ContentColumn>
+                    </ProjectCardInner>
+                  </ProjectCard>
+                </motion.div>
+              </AnimatePresence>
+            </ProjectStage>
+
+            <ProjectNavigation>
+              <ProjectNavButton type="button" side="left" onClick={prevProject} aria-label="Projet précédent">
+                ‹
+              </ProjectNavButton>
+
+              <ProjectDots role="tablist" aria-label="Navigation des projets">
+                {projects.map((p, idx) => (
+                  <ProjectDot
+                    key={p.id}
+                    type="button"
+                    active={idx === activeIndex}
+                    onClick={() => goTo(idx)}
+                    aria-label={`Aller au projet ${idx + 1}`}
+                    aria-current={idx === activeIndex ? 'true' : undefined}
+                  />
+                ))}
+              </ProjectDots>
+
+              <ProjectNavButton type="button" side="right" onClick={nextProject} aria-label="Projet suivant">
+                ›
+              </ProjectNavButton>
+            </ProjectNavigation>
+          </ProjectCarousel>
         </motion.div>
       </div>
     </ProjectsSection>
