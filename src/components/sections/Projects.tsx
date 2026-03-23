@@ -13,6 +13,10 @@ import stackForgeImg2 from '../../assets/images/image1 (2).png';
 import stackForgeImg3 from '../../assets/images/image1 (3).png';
 import stackForgeImg4 from '../../assets/images/image1 (4).png';
 
+import graphiTimePlanningImg from '../../assets/images/planning.png';
+import graphiTimeAlgoImg from '../../assets/images/algo.png';
+import graphiTimeTeacherImg from '../../assets/images/teacher.png';
+
 type ProjectImageItem = {
   src: string;
   alt: string;
@@ -62,13 +66,27 @@ const ProjectCardInner = styled.div`
   }
 `;
 
+/**
+ * MediaColumn: on utilise aspect-ratio en mobile pour avoir une hauteur
+ * proportionnelle à la largeur, ce qui garantit que le carousel est toujours visible.
+ * En desktop, hauteur fixe via min-height sur le parent card.
+ */
 const MediaColumn = styled.div`
   flex: 0 0 52%;
+  position: relative;
   min-height: 380px;
 
   @media (max-width: ${theme.breakpoints.md}) {
     flex: 0 0 auto;
-    min-height: 300px;
+    /* aspect-ratio 16/9 donne une hauteur proportionnelle en mobile */
+    aspect-ratio: 16 / 9;
+    min-height: unset;
+    width: 100%;
+  }
+
+  @media (max-width: ${theme.breakpoints.sm}) {
+    /* Un peu plus haut sur petit écran pour voir le contenu */
+    aspect-ratio: 4 / 3;
   }
 `;
 
@@ -78,33 +96,30 @@ const ContentColumn = styled.div`
   flex-direction: column;
 `;
 
+/**
+ * Le carousel est positionné en absolu pour remplir toute la MediaColumn.
+ * margin: 0 pour annuler le margin-bottom par défaut du CarouselRoot.
+ */
 const ProjectMediaCarousel = styled(ImageCarousel)`
+  position: absolute;
+  inset: 0;
   margin: 0;
-  height: 100%;
+  border-radius: ${theme.borderRadius.lg};
 `;
 
 const ProjectMediaFrame = styled.div`
-  width: 100%;
-  height: 100%;
-  min-height: 380px;
+  position: absolute;
+  inset: 0;
   border-radius: ${theme.borderRadius.lg};
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  @media (max-width: ${theme.breakpoints.md}) {
-    min-height: 300px;
-  }
 `;
 
 const ProjectImageLeft = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
+  object-fit: cover;
+  object-position: center top;
   display: block;
-  border-radius: ${theme.borderRadius.lg};
 `;
 
 const SectionHeader = styled.div`
@@ -254,42 +269,60 @@ const ProjectType = styled.span`
   background: ${theme.colors.gradient.accent};
   color: ${theme.colors.light};
   padding: ${theme.spacing.xs} ${theme.spacing.sm};
-  border-radius: ${theme.borderRadius.sm};
+  border-radius: ${theme.borderRadius.full};
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
+  letter-spacing: 0.05em;
 `;
 
 const ProjectDescription = styled.p`
   color: ${theme.colors.textMuted};
   line-height: 1.6;
+  font-size: 0.9375rem;
   flex: 1;
+`;
+
+const ProjectStats = styled.div`
+  display: flex;
+  gap: ${theme.spacing.md};
+`;
+
+const Stat = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${theme.spacing.xs};
+
+  .number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: ${theme.colors.accent};
+  }
+
+  .label {
+    font-size: 0.75rem;
+    color: ${theme.colors.textMuted};
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
 `;
 
 const TechStack = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${theme.spacing.xs};
-  margin: ${theme.spacing.md} 0;
 `;
 
 const TechTag = styled.span`
-  background: ${theme.colors.glass.card};
-  color: ${theme.colors.accent};
-  padding: ${theme.spacing.xs} ${theme.spacing.sm};
-  border-radius: ${theme.borderRadius.sm};
-  font-size: 0.875rem;
-  font-weight: 500;
+  background: ${theme.colors.glass.background};
   border: 1px solid ${theme.colors.glass.border};
-  transition: all ${theme.transitions.default};
-  
-  &:hover {
-    background: ${theme.colors.accent};
-    color: ${theme.colors.dark};
-    transform: translateY(-1px);
-  }
+  color: ${theme.colors.textMuted};
+  padding: ${theme.spacing.xs} ${theme.spacing.sm};
+  border-radius: ${theme.borderRadius.full};
+  font-size: 0.75rem;
+  font-weight: 500;
+  backdrop-filter: blur(8px);
 `;
 
 const ProjectLinks = styled.div`
@@ -297,33 +330,6 @@ const ProjectLinks = styled.div`
   gap: ${theme.spacing.sm};
   margin-top: auto;
   padding-top: ${theme.spacing.md};
-  border-top: 1px solid ${theme.colors.glass.border};
-`;
-
-const ProjectStats = styled.div`
-  display: flex;
-  gap: ${theme.spacing.lg};
-  margin: ${theme.spacing.md} 0;
-  padding: ${theme.spacing.md};
-  background: ${theme.colors.glass.background};
-  border-radius: ${theme.borderRadius.md};
-  border: 1px solid ${theme.colors.glass.border};
-`;
-
-const Stat = styled.div`
-  text-align: center;
-  
-  .number {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: ${theme.colors.accent};
-    display: block;
-  }
-  
-  .label {
-    font-size: 0.875rem;
-    color: ${theme.colors.textMuted};
-  }
 `;
 
 const projects: Project[] = [
@@ -331,7 +337,7 @@ const projects: Project[] = [
     id: 1,
     title: "StackForge Generator",
     type: "Full Stack",
-    description: "Projet personnel d’application de bureau StackForge Generator : générateur Full‑Stack (Spring Boot + Vue.js) à partir d’une base MySQL, avec une application JavaFX qui fait l’introspection du schéma, génère un CRUD avancé (DTO/Mapper, relations, Many‑to‑Many), et supporte des filtres dynamiques (QueryDSL) + export/import de configuration.",
+    description: "Projet personnel d'application de bureau StackForge Generator : générateur Full‑Stack (Spring Boot + Vue.js) à partir d'une base MySQL, avec une application JavaFX qui fait l'introspection du schéma, génère un CRUD avancé (DTO/Mapper, relations, Many‑to‑Many), et supporte des filtres dynamiques (QueryDSL) + export/import de configuration.",
     images: [
       { src: stackForgeImg1, alt: 'StackForge Generator - capture 1' },
       { src: stackForgeImg2, alt: 'StackForge Generator - capture 2' },
@@ -350,6 +356,26 @@ const projects: Project[] = [
   },
   {
     id: 2,
+    title: "GraphiTime",
+    type: "Full Stack",
+    description: "GraphiTime est une application web full stack de gestion d'emplois du temps pour les établissements scolaires malgaches. Elle automatise la génération de plannings hebdomadaires sans conflit grâce à un algorithme de satisfaction de contraintes (CP-SAT / Google OR-Tools), en tenant compte des disponibilités des professeurs, des salles et des classes. L'application propose une interface moderne et intuitive pour visualiser, modifier par glisser-déposer et exporter les plannings en PDF, Excel (XLSX) et CSV. Le serveur expose une API GraphQL sécurisée avec authentification par cookies et une architecture multi-tenant.",
+    images: [
+      { src: graphiTimePlanningImg, alt: 'GraphiTime - planning' },
+      { src: graphiTimeAlgoImg, alt: 'GraphiTime - génération' },
+      { src: graphiTimeTeacherImg, alt: 'GraphiTime - professeurs' },
+    ],
+    image: graphiTimePlanningImg,
+    techStack: ["React", "TypeScript", "Vite", "Python", "FastAPI", "Strawberry GraphQL", "PostgreSQL", "Google OR-Tools", "GraphQL"],
+    githubUrl: "https://github.com",
+    liveUrl: "https://example.com",
+    stats: {
+      commits: "200+",
+      lines: "30K+",
+      features: "20+"
+    }
+  },
+  {
+    id: 3,
     title: "Task Management App",
     type: "Frontend",
     description: "Application de gestion de tâches collaborative avec drag & drop, notifications en temps réel et synchronisation multi-appareils.",
@@ -364,7 +390,7 @@ const projects: Project[] = [
     }
   },
   {
-    id: 3,
+    id: 4,
     title: "Analytics Dashboard",
     type: "Data Viz",
     description: "Dashboard analytique interactif avec visualisations de données en temps réel, rapports personnalisables et export multi-formats.",
@@ -461,11 +487,20 @@ export const Projects = () => {
                   <ProjectCard variant="glass" padding="lg" hoverable>
                     <ProjectCardInner>
                       <MediaColumn>
-                        {activeProject.id === 1 && activeProject.images ? (
-                          <ProjectMediaCarousel images={activeProject.images} height={320} />
+                        {activeProject.images ? (
+                          // height="100%" fonctionne car MediaColumn est position: relative
+                          // et le carousel est position: absolute inset: 0
+                          <ProjectMediaCarousel
+                            images={activeProject.images}
+                            height="100%"
+                          />
                         ) : (
                           <ProjectMediaFrame>
-                            <ProjectImageLeft src={activeProject.image} alt={activeProject.title} loading="lazy" />
+                            <ProjectImageLeft
+                              src={activeProject.image}
+                              alt={activeProject.title}
+                              loading="lazy"
+                            />
                           </ProjectMediaFrame>
                         )}
                       </MediaColumn>
@@ -562,4 +597,3 @@ export const Projects = () => {
     </ProjectsSection>
   );
 };
-

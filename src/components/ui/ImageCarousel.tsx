@@ -11,12 +11,13 @@ type CarouselImage = {
 interface ImageCarouselProps {
   images: CarouselImage[];
   className?: string;
-  height?: number;
+  /** Hauteur fixe en px (ex: 320) ou valeur CSS (ex: "100%"). Défaut : 250 */
+  height?: number | string;
 }
 
-const CarouselRoot = styled.div<{ height: number }>`
+const CarouselRoot = styled.div<{ height: number | string }>`
   width: 100%;
-  height: ${({ height }) => `${height}px`};
+  height: ${({ height }) => (typeof height === 'number' ? `${height}px` : height)};
   position: relative;
   margin: 0 0 ${theme.spacing.lg} 0;
   border-radius: ${theme.borderRadius.lg};
@@ -31,6 +32,24 @@ const Slides = styled.div`
   position: relative;
 `;
 
+/**
+ * Arrière-plan flouté : même image étirée + flou fort.
+ * Remplace les bandes noires par une ambiance colorée liée au screenshot.
+ */
+const SlideBlurBg = styled(motion.img)`
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  object-fit: cover;
+  object-position: center;
+  filter: blur(18px) brightness(0.45) saturate(1.2);
+  pointer-events: none;
+`;
+
+/**
+ * Image principale : affichée en entier, sans recadrage.
+ */
 const Slide = styled(motion.img)`
   position: absolute;
   inset: 0;
@@ -38,7 +57,7 @@ const Slide = styled(motion.img)`
   height: 100%;
   object-fit: contain;
   object-position: center;
-  background: ${theme.colors.cardBackground};
+  pointer-events: none;
 `;
 
 const Overlay = styled.div`
@@ -46,9 +65,9 @@ const Overlay = styled.div`
   inset: 0;
   background: linear-gradient(
     135deg,
-    ${theme.colors.accent}20 0%,
+    ${theme.colors.accent}18 0%,
     transparent 50%,
-    ${theme.colors.accentSecondary}20 100%
+    ${theme.colors.accentSecondary}18 100%
   );
   opacity: 0;
   transition: opacity ${theme.transitions.default};
@@ -171,6 +190,19 @@ export const ImageCarousel = ({ images, className, height = 250 }: ImageCarousel
     >
       <Slides>
         <AnimatePresence mode="wait">
+          {/* Fond flouté — suit l'image active, donne de l'ambiance sans bandes noires */}
+          <SlideBlurBg
+            key={`bg-${active.src}`}
+            src={active.src}
+            alt=""
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          />
+
+          {/* Image principale — visible en entier, sans crop */}
           <Slide
             key={active.src}
             src={active.src}
