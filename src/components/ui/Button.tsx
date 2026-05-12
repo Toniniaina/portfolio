@@ -9,6 +9,7 @@ interface ButtonProps {
   size?: 'sm' | 'md' | 'lg';
   onClick?: () => void;
   href?: string;
+  download?: boolean | string;
   target?: string;
   rel?: string;
   disabled?: boolean;
@@ -183,6 +184,7 @@ export const Button = ({
   size = 'md',
   onClick,
   href,
+  download,
   target,
   rel,
   disabled = false,
@@ -200,6 +202,7 @@ export const Button = ({
     return (
       <StyledLink
         href={href}
+        download={download}
         target={target}
         rel={rel}
         variant={variant}

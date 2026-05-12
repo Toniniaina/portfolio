@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { FaGithub, FaLinkedin, FaTwitter, FaDownload, FaArrowRight } from 'react-icons/fa';
 import { useInView } from 'react-intersection-observer';
 import profileImg from '../../assets/images/20260308_084835.jpg';
+import cvFile from '../../assets/cv/CV_Randrianjanahary Kantoniaina.pdf';
 
 
 
@@ -309,7 +310,14 @@ export const Hero = () => {
               <Button variant="primary" size="lg" href="#projects">
                 Voir mes projets <FaArrowRight />
               </Button>
-              <Button variant="outline" size="lg" href="/cv.pdf" target="_blank" rel="noopener noreferrer">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                href={cvFile} 
+                download="CV_Randrianjanahary_Kantoniaina.pdf"
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
                 Télécharger CV <FaDownload />
               </Button>
             </CtaButtons>
